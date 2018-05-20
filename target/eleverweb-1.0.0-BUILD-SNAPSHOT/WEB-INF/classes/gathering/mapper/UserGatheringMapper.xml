@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="gathering.mapper.UserGatheringMapper">	
+
+	<!-- 예약신청 confirm -->
+	<insert id="insert_gathering_schedule" parameterType="GatheringScheduleInfoModel" useGeneratedKeys="true" keyProperty="schedule_seq">
+
+	INSERT INTO gathering_schedule_info
+		(
+		`user_seq`
+		,`gathering_seq`
+		,`order_no`
+		,`user_name`
+		,`user_phoneno`
+		,`user_email`
+		,`member`
+		,`account_way`
+		,`status`
+		, reg_cdd
+		, reg_cdt
+		<if test="coupon_seq != null">, `coupon_seq`</if>
+		)
+		VALUES
+		(
+		#{user_seq}
+		,#{gathering_seq}
+		,#{order_no}
+		,#{user_name}
+		,#{user_phoneno}
+		,#{user_email}
+		,#{member}
+		,#{account_way}
+		,#{status}
+		,DATE_FORMAT(now(), '%Y%m%d')
+	    ,DATE_FORMAT(now(), '%H%i%s') 
+	    <if test="coupon_seq != null">, (SELECT coupon_seq FROM coupon_info WHERE use_yn = "0" AND CONCAT(coupon_limit) >= DATE_FORMAT(now(),'%Y-%m-%d') AND user_seq = #{user_seq} AND coupon_id = #{coupon_seq}) </if>
+	    )
+	</insert>
+	
+    <!-- 모임 main -->
+	<select id="select_gatheringInfo" parameterType="String" resultType="GatheringInfoModel">
+		
+		SELECT
+		 
+			gathering_seq
+			, gathering_name
+			, gathering_instruction
+			, CONCAT(LEFT(gathering_ymd, 4),"년 ",SUBSTRING(gathering_ymd,6,2),"월 ",RIGHT(gathering_ymd,2),"일 ",CASE dayofweek(gathering_ymd) WHEN 1 THEN '일요일' WHEN 2 THEN '월요일' WHEN 3 THEN '화요일' WHEN 4 THEN '수요일' WHEN 5 THEN '목요일' WHEN 6 THEN '금요일' WHEN 7 THEN '토요일' END) as gathering_ymd
+			, gathering_main_image
+			, gathering_sub_image
+			, CONCAT(LEFT(gathering_limit_ymd, 4),"년 ",SUBSTRING(gathering_limit_ymd,6,2),"월 ",RIGHT(gathering_limit_ymd,2),"일") as gathering_limit_ymd
+			, IF(TO_DAYS(gathering_limit_ymd) - TO_DAYS(date_format(now(), '%Y-%m-%d')) > 0
+				,CONCAT("(",TO_DAYS(gathering_limit_ymd) - TO_DAYS(date_format(now(), '%Y-%m-%d')),"일 남음)")
+				,IF(TO_DAYS(gathering_limit_ymd) - TO_DAYS(date_format(now(), '%Y-%m-%d')) = 0
+				   ,"(오늘)"
+				   ,NULL
+				   )
+				) as gathering_to_days
+			, gathering_start_time
+			, gathering_end_time
+			, gathering_longitude
+			, gathering_latitude
+			, gathering_localtitle
+			, gathering_place
+			, gathering_price
+			, gathering_max
+			, (SELECT SUM(member) FROM gathering_schedule_info WHERE A.gathering_seq = gathering_seq AND delete_yn ='0' AND NOT status ='4') as gathering_member
+			, gathering_tag
+			, gathering_slide_image
+			
+		  FROM gathering_info A
+		 WHERE gathering_seq = #{gathering_seq}
+		
+	</select>
+	
+	<select id="select_gathering_main_tag" parameterType="hashmap" resultType="TagInfoModel">
+		
+		SELECT
+			tag_seq
+			, tag_name
+			, tag_image_default
+			, tag_image_hover
+			, tag_image_active
+			
+		  FROM tag_info
+		 WHERE tag_seq IN
+		<foreach collection="array" item="item" index="index" separator="," open="(" close=")">
+			#{item}
+		</foreach>
+	</select>
+	
+	<update id="update_gathering_count" parameterType="String">
+		
+		UPDATE gathering_info
+		   SET gathering_count = gathering_count + 1
+		 WHERE gathering_seq = #{gathering_seq}
+
+	</update>
+	
+</mapper>

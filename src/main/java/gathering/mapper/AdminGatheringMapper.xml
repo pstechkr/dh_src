@@ -1,0 +1,311 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="gathering.mapper.AdminGatheringMapper">	
+
+    <!-- 모임 입력 -->
+	<insert id="insert_gatheringInfo" parameterType="GatheringInfoModel" useGeneratedKeys="true" keyProperty="gathering_seq">
+		
+		INSERT INTO gathering_info
+		(
+		`gathering_name`
+		,`gathering_ymd`
+		,`gathering_limit_ymd`
+		,`gathering_start_time`
+		,`gathering_end_time`
+		,`gathering_longitude`
+		,`gathering_latitude`
+		,`gathering_localtitle`
+		,`gathering_localname1`
+		,`gathering_localname2`
+		,`gathering_localname3`
+		,`gathering_localname4`
+		,`gathering_instruction`
+		,`gathering_main_image`
+		,`gathering_sub_image`
+		,`gathering_slide_image`
+		,`gathering_place`
+		,`gathering_price`
+		,`gathering_max`
+		,`gathering_tag`
+		,`reg_cdd`
+		,`reg_cdt`
+		)
+		VALUES
+		(
+		#{gathering_name}
+		,#{gathering_ymd}
+		,#{gathering_limit_ymd}
+		,#{gathering_start_time}
+		,#{gathering_end_time}
+		,#{gathering_longitude}
+		,#{gathering_latitude}
+		,#{gathering_localtitle}
+		,#{gathering_localname1}
+		,#{gathering_localname2}
+		,#{gathering_localname3}
+		,#{gathering_localname4}
+		,#{gathering_instruction}
+		,#{gathering_main_image}
+		,#{gathering_sub_image}
+		,#{gathering_slide_image}
+		,#{gathering_place}
+		,#{gathering_price}
+		,#{gathering_max}
+		,#{gathering_tag}
+		,DATE_FORMAT(now(), '%Y%m%d')
+	    ,DATE_FORMAT(now(), '%H%i%s') 
+		)
+		
+	</insert>
+	
+	<!-- 모임 입력 (소개글) -->
+	<!--
+	<update id="update_gatheringInfo_instruction" parameterType="GatheringInfoModel">
+		
+		UPDATE gathering_info
+	   	   SET gathering_instruction = #{gathering_instruction}
+	   	 WHERE gathering_seq = #{gathering_seq}
+	
+	</update> -->
+	
+	<!-- 모임 입력 (사진) -->
+	<!-- 
+	<update id="update_gatheringInfo_main_image" parameterType="GatheringInfoModel">
+		
+		UPDATE gathering_info
+	   	   SET gathering_main_image = #{gathering_main_image}
+	   	 WHERE gathering_seq = #{gathering_seq}
+	
+	</update>-->
+	
+	<!-- 모임 입력 (사진) -->
+	<!-- 
+	<update id="update_gatheringInfo_sub_image" parameterType="GatheringInfoModel">
+		
+		UPDATE gathering_info
+	   	   SET gathering_sub_image = #{gathering_sub_image}
+	   	 WHERE gathering_seq = #{gathering_seq}
+	
+	</update> -->
+	
+	<!-- 모임 리스트 select -->
+	<select id="select_gatheringInfo" parameterType="hashmap" resultType="GatheringInfoModel">
+		
+		SELECT
+			A.gathering_seq
+			, A.gathering_name
+			, A.gathering_ymd
+			, A.gathering_main_image
+			, A.gathering_start_time
+			, A.gathering_end_time
+			, FORMAT(A.gathering_price,0) as gathering_price
+			, A.gathering_max
+			, (SELECT SUM(member) FROM gathering_schedule_info WHERE gathering_seq = A.gathering_seq AND delete_yn ='0' AND NOT status ='4') as gathering_member
+			
+		  FROM gathering_info A
+		 WHERE A.delete_yn = '0'
+	  ORDER BY gathering_seq DESC
+		 LIMIT ${page}, ${row}
+		 
+	</select>
+	
+	<!-- 수정시 불러오는 모임 정보 -->
+	<select id="select_gatheringInfo_modify" parameterType="String" resultType="GatheringInfoModel">
+		
+		SELECT
+			gathering_seq
+			, gathering_name
+			, gathering_ymd
+			, gathering_limit_ymd
+			, gathering_start_time
+			, gathering_end_time
+			, gathering_longitude
+			, gathering_latitude
+			, gathering_localtitle
+			, gathering_localname1
+			, gathering_localname2
+			, gathering_localname3
+			, gathering_localname4
+			, gathering_place
+			, gathering_price
+			, gathering_max
+			, gathering_tag
+			, gathering_instruction
+			, gathering_sub_image
+			, gathering_main_image
+			, gathering_slide_image
+			
+		FROM gathering_info
+		WHERE delete_yn = '0'
+		  AND gathering_seq = #{gathering_seq}
+		
+	</select>
+	
+	<!-- 수정시 update -->
+	<update id="update_gatheringInfo_modify" parameterType="GatheringInfoModel">
+		
+		UPDATE gathering_info
+			<set>
+				<if test="gathering_name != null">gathering_name = #{gathering_name},</if>
+				<if test="gathering_ymd != null">gathering_ymd = #{gathering_ymd},</if>
+				<if test="gathering_limit_ymd != null">gathering_limit_ymd = #{gathering_limit_ymd},</if>
+				<if test="gathering_start_time != null">gathering_start_time = #{gathering_start_time},</if>
+				<if test="gathering_end_time != null">gathering_end_time = #{gathering_end_time},</if>
+				<if test="gathering_longitude != null">gathering_longitude = #{gathering_longitude},</if>
+				<if test="gathering_latitude != null">gathering_latitude = #{gathering_latitude},</if>
+				<if test="gathering_localtitle != null">gathering_localtitle = #{gathering_localtitle},</if>
+				<if test="gathering_localname1 != null">gathering_localname1 = #{gathering_localname1},</if>
+				<if test="gathering_localname2 != null">gathering_localname2 = #{gathering_localname2},</if>
+				<if test="gathering_localname3 != null">gathering_localname3 = #{gathering_localname3},</if>
+				<if test="gathering_localname4 != null">gathering_localname4 = #{gathering_localname4},</if>
+				<if test="gathering_place != null">gathering_place = #{gathering_place},</if>
+				<if test="gathering_price != null">gathering_price = #{gathering_price},</if>
+				<if test="gathering_max != null">gathering_max = #{gathering_max},</if>
+				<if test="gathering_tag != null">gathering_tag = #{gathering_tag},</if>
+				<if test="gathering_instruction != null">gathering_instruction = #{gathering_instruction},</if>
+				<if test="gathering_sub_image != null">gathering_sub_image = #{gathering_sub_image},</if>
+				<if test="gathering_main_image != null">gathering_main_image = #{gathering_main_image},</if>
+				<if test="gathering_slide_image != null">gathering_slide_image = #{gathering_slide_image},</if>
+				
+			</set>
+		 WHERE gathering_seq = #{gathering_seq}
+	
+	</update>
+	
+	
+	<!-- NOW 모임 리스트 (일반에 나타날 리스트-index-) -->
+	<select id="select_now_gatheringInfo_search" resultType="GatheringInfoModel">
+		
+		SELECT
+			gathering_seq
+			, gathering_name
+			, CONCAT(gathering_ymd," ", CASE dayofweek(gathering_ymd) WHEN 1 THEN '일요일' WHEN 2 THEN '월요일' WHEN 3 THEN '화요일' WHEN 4 THEN '수요일' WHEN 5 THEN '목요일' WHEN 6 THEN '금요일' WHEN 7 THEN '토요일' END) as gathering_ymd 
+			, gathering_sub_image
+			, gathering_start_time
+			, gathering_end_time
+			, FORMAT(gathering_price,0) as gathering_price
+			, gathering_localname2
+		
+		  FROM gathering_info
+		 WHERE delete_yn = '0'
+		   AND CONCAT(gathering_ymd," ",gathering_start_time) >= DATE_FORMAT(now(),'%Y-%m-%d %k:%s')
+	  ORDER BY gathering_seq DESC
+	</select>
+	
+	<!-- PAST 모임 리스트 (일반에 나타날 리스트-index-) -->
+	<select id="select_past_gatheringInfo_search" resultType="GatheringInfoModel">
+		
+		SELECT
+			gathering_seq
+			, gathering_name
+			, CONCAT(gathering_ymd," ", CASE dayofweek(gathering_ymd) WHEN 1 THEN '일요일' WHEN 2 THEN '월요일' WHEN 3 THEN '화요일' WHEN 4 THEN '수요일' WHEN 5 THEN '목요일' WHEN 6 THEN '금요일' WHEN 7 THEN '토요일' END) as gathering_ymd
+			, gathering_sub_image
+			, gathering_start_time
+			, gathering_end_time
+			, FORMAT(gathering_price,0) as gathering_price
+			, gathering_localname2
+		
+		  FROM gathering_info
+		 WHERE delete_yn = '0'
+		   AND DATE_FORMAT(now(),'%Y-%m-%d %k:%s') >= CONCAT(gathering_ymd," ",gathering_start_time)
+	  ORDER BY gathering_seq DESC
+	</select>
+
+
+
+
+
+	<!-- 페이지 번호 -->
+	<select id="select_gathering_pagination" parameterType="hashmap" resultType="hashmap">
+		
+		SELECT
+			CONCAT(CEIL(COUNT(*)/${row})) as total_pagination
+			, CONCAT(CEIL(CEIL(COUNT(*)/${row})/${pagination_row})) as divide_pagination
+			
+		  FROM gathering_info
+		 WHERE delete_yn = '0'
+		
+	</select>
+
+	<select id="select_elever_tag" resultType="TagInfoModel">
+		
+		SELECT
+			tag_seq
+			, tag_name
+			, tag_image_default
+			, tag_image_hover
+			, tag_image_active
+		
+		  FROM tag_info
+		
+	</select>
+	
+	
+	<select id="select_gathering_member" parameterType="String" resultType="GatheringMemberInfoModel">
+		
+		SELECT
+		
+			A.schedule_seq
+			, A.user_name as user_name
+			, A.user_phoneno as user_phoneno
+			, A.member as member
+			, A.order_no as order_no
+			, CASE A.status WHEN '0' THEN '신청대기' WHEN '1' THEN '결제대기' WHEN '2' THEN '결제완료' WHEN '3' THEN '사용완료' WHEN '4' THEN '취소' END as status
+			, FORMAT(IF(C.coupon_div is null, B.gathering_price * A.member, IF(C.coupon_div = '0', (B.gathering_price * A.member) - C.coupon_price, (B.gathering_price * A.member) / C.coupon_price)), 0) as price
+			<!--, FORMAT(B.gathering_price * A.member,0) as price-->
+			, CASE A.account_way WHEN '0' THEN '무통장입금' WHEN '1' THEN '신용카드결제' WHEN '2' THEN '휴대폰결제' END as account_way
+			, CAST(DATE_FORMAT(A.reg_cdd,'%Y-%m-%d') AS CHAR(10)) as reg_cdd
+			, CAST(DATE_FORMAT(A.registerdt,'%p %r') AS CHAR(8)) as reg_cdt
+		
+
+  		   FROM gathering_schedule_info A
+ 	 INNER JOIN gathering_info B
+			 ON A.gathering_seq = B.gathering_seq
+LEFT OUTER JOIN coupon_info C
+		  	 ON A.coupon_seq = C.coupon_seq
+		  WHERE A.gathering_seq = #{gathering_seq}
+		    AND A.delete_yn = '0'
+		  ORDER BY A.registerdt DESC
+		   
+		
+	</select>
+	
+	<!-- member에서 모임제목만 불러오기 -->
+	<select id="select_gathering_name" parameterType="String" resultType="String">
+		
+		SELECT
+			gathering_name
+			
+		  FROM gathering_info
+		 WHERE gathering_seq = #{gathering_seq}
+		
+	</select>
+	
+	<!-- 관리자가 status 변경 -->
+	<update id="update_gathering_status" parameterType="hashmap">
+		
+		UPDATE gathering_schedule_info
+		<set>
+			<if test="status != null">status = #{status},</if>
+			<if test="cancel_user_seq != null">cancel_user_seq = #{cancel_user_seq},cancel_registerdt = CURRENT_TIMESTAMP,</if>
+		</set>   
+   		 WHERE schedule_seq = #{schedule_seq}
+		
+	</update>
+	
+	<!-- 삭제 -->
+	<update id="update_gathering_list_delete" parameterType="hashmap">
+		
+		UPDATE gathering_info
+		   SET delete_yn = '1'
+		 WHERE gathering_seq IN 
+		<foreach collection="array" item="item" index="index" separator="," open="(" close=")">
+			#{item}
+		</foreach>
+		
+	</update>
+	
+</mapper>

@@ -1,0 +1,351 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="user.mapper.MypageMapper">	
+
+	<!-- PURCHASE -->
+	<select id="select_all_purchase" parameterType="hashmap" resultType="TicketInfoModel">
+		
+		( SELECT 
+				  A.schedule_seq as schedule_seq
+				, A.order_no as order_no
+				, A.user_seq as user_seq
+				, A.user_name as user_name
+				, A.user_phoneno as user_phoneno
+				, A.gathering_seq as gathering_seq
+				, A.member as member
+				, B.gathering_name as name
+				, B.gathering_ymd as ymd
+				, B.gathering_start_time as start_time
+				, B.gathering_end_time as end_time
+				, B.gathering_longitude as longitude
+				, B.gathering_latitude as latitude
+				, CASE A.status WHEN '0' THEN '신청대기' WHEN '1' THEN '결제대기' WHEN '2' THEN '결제완료' WHEN '3' THEN '사용완료' WHEN '4' THEN '취소' END as status
+				, CASE A.account_way WHEN '0' THEN '무통장입금' WHEN '1' THEN '카드결제' WHEN '2' THEN '휴대폰결제' WHEN '3' THEN '현장결제' END as account_way
+				, FORMAT(IF(C.coupon_div is null, B.gathering_price * A.member, IF(C.coupon_div = '0', (B.gathering_price * A.member) - C.coupon_price, (B.gathering_price * A.member) / C.coupon_price)), 0) as price
+				, CAST(DATE_FORMAT(A.reg_cdd,'%Y-%m-%d') AS CHAR(10)) as reg_cdd
+				, CAST(DATE_FORMAT(A.registerdt,'%p %r') AS CHAR(8)) as reg_cdt
+				, A.point as point
+				, '엘루비 프로젝트' as product_name
+				, 'project' as product
+				, A.registerdt as registerdt
+			FROM gathering_schedule_info A
+	  INNER JOIN gathering_info B 
+			  ON A.gathering_seq = B.gathering_seq
+ LEFT OUTER JOIN coupon_info C
+ 			  ON A.coupon_seq = C.coupon_seq 
+		   WHERE A.user_seq = #{user_seq}
+		   	 AND A.status IN ('3', '4')
+		     AND A.delete_yn = '0'
+		     AND A.registerdt >= NOW() - INTERVAL ${month} MONTH
+	    )
+	       UNION ALL
+
+		( SELECT
+				  D.schedule_seq as schedule_seq
+				, D.order_no as order_no
+				, D.user_seq as user_seq
+				, D.user_name as user_name
+				, D.user_phoneno as user_phoneno
+				, null as gathering_seq
+				, D.member as member
+				, D.menu_name as name
+				, D.schedule_ymd as ymd
+				, D.schedule_hm as start_time
+				, D.menu_time as end_time
+				, E.store_latitude as latitude
+				, E.store_longitude as longitude
+				, CASE D.status WHEN '0' THEN '신청대기' WHEN '1' THEN '결제대기' WHEN '2' THEN '결제완료' WHEN '3' THEN '사용완료' WHEN '4' THEN '취소' END as status
+				, CASE D.account_way WHEN '0' THEN '무통장입금' WHEN '1' THEN '카드결제' WHEN '2' THEN '휴대폰결제' WHEN '3' THEN '현장결제' END as account_way
+				, FORMAT(IF(F.coupon_div is null, D.menu_price * D.member, 
+							IF(F.coupon_div = '0', (D.menu_price * D.member) - F.coupon_price, 
+								(D.menu_price * D.member) / F.coupon_price )
+							), 0) as price
+
+				, CAST(DATE_FORMAT(D.reg_cdd,'%Y-%m-%d') AS CHAR(10)) as reg_cdd
+				, CAST(DATE_FORMAT(D.registerdt,'%p %r') AS CHAR(8)) as reg_cdt
+				, '엘루비 스토어' as product_name
+				, D.point as point
+				, 'store' as product 
+				, D.registerdt as registerdt
+			FROM schedule_info D
+	  INNER JOIN client_store E
+	  		  ON D.store_seq = E.store_seq
+ LEFT OUTER JOIN coupon_info F
+ 			  ON D.coupon_seq = F.coupon_seq 
+		   WHERE D.user_seq = #{user_seq}
+		   	 AND D.delete_yn = '0'
+		     AND D.status IN ('3', '4')
+			 AND D.registerdt >= NOW() - INTERVAL ${month} MONTH
+		)
+
+		ORDER BY registerdt DESC
+		LIMIT ${page}, ${row}
+		
+	</select>
+	
+	
+	<!-- 지난 구매내역 중에서 전체 -->
+	<select id="select_all_purchase_count" parameterType="hashmap" resultType="String">
+		
+		SELECT
+			
+			(SELECT COUNT(*) FROM gathering_schedule_info WHERE user_seq = #{user_seq} AND delete_yn = '0' AND registerdt >= NOW() - INTERVAL ${month} MONTH AND status IN ('3', '4'))	+
+			(SELECT COUNT(*) FROM schedule_info WHERE user_seq = #{user_seq} AND delete_yn = '0' AND registerdt >= NOW() - INTERVAL ${month} MONTH AND status IN ('3', '4'))
+
+		  FROM DUAL
+		  
+	</select>
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	<!-- TICKET -->
+	<select id="select_all_ticket" parameterType="hashmap" resultType="TicketInfoModel">
+		
+   		( SELECT 
+				  A.schedule_seq as schedule_seq
+				, A.order_no as order_no
+				, A.user_seq as user_seq
+				, A.user_name as user_name
+				, A.user_phoneno as user_phoneno
+				, A.gathering_seq as gathering_seq
+				, A.member as member
+				, B.gathering_name as name
+				, B.gathering_ymd as ymd
+				, B.gathering_start_time as start_time
+				, B.gathering_end_time as end_time
+				, B.gathering_longitude as longitude
+				, B.gathering_latitude as latitude
+				, CASE A.status WHEN '0' THEN '신청대기' WHEN '1' THEN '결제대기' WHEN '2' THEN '결제완료' WHEN '3' THEN '사용완료' WHEN '4' THEN '취소' END as status
+				, CASE A.account_way WHEN '0' THEN '무통장입금' WHEN '1' THEN '카드결제' WHEN '2' THEN '휴대폰결제' WHEN '3' THEN '현장결제' END as account_way
+				, FORMAT(IF(C.coupon_div is null, B.gathering_price * A.member, IF(C.coupon_div = '0', (B.gathering_price * A.member) - C.coupon_price, (B.gathering_price * A.member) / C.coupon_price)), 0) as price
+				, CAST(DATE_FORMAT(A.reg_cdd,'%Y-%m-%d') AS CHAR(10)) as reg_cdd
+				, CAST(DATE_FORMAT(A.registerdt,'%p %r') AS CHAR(8)) as reg_cdt
+				, '엘루비 프로젝트' as product_name
+				, 'project' as product
+				, A.registerdt as registerdt
+			FROM gathering_schedule_info A
+	  INNER JOIN gathering_info B 
+			  ON A.gathering_seq = B.gathering_seq
+ LEFT OUTER JOIN coupon_info C
+ 			  ON A.coupon_seq = C.coupon_seq 
+		   WHERE A.user_seq = #{user_seq}
+		   	 AND A.status IN ('1', '2')
+		     AND A.delete_yn = '0'
+	    )
+	       UNION ALL
+
+		( SELECT
+				  D.schedule_seq as schedule_seq
+				, D.order_no as order_no
+				, D.user_seq as user_seq
+				, D.user_name as user_name
+				, D.user_phoneno as user_phoneno
+				, null as gathering_seq
+				, D.member as member
+				, D.menu_name as name
+				, D.schedule_ymd as ymd
+				, D.schedule_hm as start_time
+				, D.menu_time as end_time
+				, E.store_latitude as latitude
+				, E.store_longitude as longitude
+				, CASE D.status WHEN '0' THEN '신청대기' WHEN '1' THEN '결제대기' WHEN '2' THEN '결제완료' WHEN '3' THEN '사용완료' WHEN '4' THEN '취소' END as status
+				, CASE D.account_way WHEN '0' THEN '무통장입금' WHEN '1' THEN '카드결제' WHEN '2' THEN '휴대폰결제' WHEN '3' THEN '현장결제' END as account_way
+				, FORMAT(IF(F.coupon_div is null, D.menu_price * D.member, IF(F.coupon_div = '0', (D.menu_price * D.member) - F.coupon_price, (D.menu_price * D.member) / F.coupon_price )), 0) as price
+				, CAST(DATE_FORMAT(D.reg_cdd,'%Y-%m-%d') AS CHAR(10)) as reg_cdd
+				, CAST(DATE_FORMAT(D.registerdt,'%p %r') AS CHAR(8)) as reg_cdt
+				, '엘루비 스토어' as product_name
+				, 'store' as product 
+				, D.registerdt as registerdt
+			FROM schedule_info D
+	  INNER JOIN client_store E
+	  		  ON D.store_seq = E.store_seq
+ LEFT OUTER JOIN coupon_info F
+ 			  ON D.coupon_seq = F.coupon_seq 
+		   WHERE D.user_seq = #{user_seq}
+		     AND D.status IN ('1', '2')
+			 AND D.delete_yn = '0'	
+		)
+
+		ORDER BY registerdt DESC
+		LIMIT ${page}, ${row}
+		   
+	</select>
+	
+	<select id="select_gathering_ticket" parameterType="hashmap" resultType="hashmap">
+		
+		SELECT 
+				  A.schedule_seq as schedule_seq
+				, A.order_no as order_no
+				, A.user_seq as user_seq
+				, A.user_name as user_name
+				, A.user_phoneno as user_phoneno
+				, A.gathering_seq as gathering_seq
+				, A.member as member
+				, B.gathering_name as name
+				, B.gathering_ymd as ymd
+				, B.gathering_start_time as start_time
+				, B.gathering_end_time as end_time
+				, B.gathering_longitude as longitude
+				, B.gathering_latitude as latitude
+				, CASE A.status WHEN '0' THEN '신청대기' WHEN '1' THEN '결제대기' WHEN '2' THEN '결제완료' WHEN '3' THEN '사용완료' WHEN '4' THEN '취소' END as status
+				, CASE A.account_way WHEN '0' THEN '무통장입금' WHEN '1' THEN '카드결제' WHEN '2' THEN '휴대폰결제' WHEN '3' THEN '현장결제' END as account_way
+				, FORMAT(IF(C.coupon_div is null, B.gathering_price * A.member, IF(C.coupon_div = '0', (B.gathering_price * A.member) - C.coupon_price, (B.gathering_price * A.member) / C.coupon_price)), 0) as price
+				, CAST(DATE_FORMAT(A.reg_cdd,'%Y-%m-%d') AS CHAR(10)) as reg_cdd
+				, CAST(DATE_FORMAT(A.registerdt,'%p %r') AS CHAR(8)) as reg_cdt
+				, '엘루비 프로젝트' as product_name
+				, 'project' as product
+				, A.registerdt as registerdt
+			FROM gathering_schedule_info A
+	  INNER JOIN gathering_info B 
+			  ON A.gathering_seq = B.gathering_seq
+ LEFT OUTER JOIN coupon_info C
+ 			  ON A.coupon_seq = C.coupon_seq 
+		   WHERE A.user_seq = #{user_seq}
+		   	 AND A.status IN ('1', '2')
+		     AND A.delete_yn = '0'
+		ORDER BY A.registerdt DESC
+		   LIMIT ${page}, ${row}
+		   
+	</select>
+	
+	<select id="select_store_ticket" parameterType="hashmap" resultType="hashmap">
+		
+		SELECT
+				  A.schedule_seq as schedule_seq
+				, A.order_no as order_no
+				, A.user_seq as user_seq
+				, A.user_name as user_name
+				, A.user_phoneno as user_phoneno
+				, null as gathering_seq
+				, A.member as member
+				, A.menu_name as name
+				, A.schedule_ymd as ymd
+				, A.schedule_hm as start_time
+				, A.menu_time as end_time
+				, B.store_latitude as latitude
+				, B.store_longitude as longitude
+				, CASE A.status WHEN '0' THEN '신청대기' WHEN '1' THEN '결제대기' WHEN '2' THEN '결제완료' WHEN '3' THEN '사용완료' WHEN '4' THEN '취소' END as status
+				, CASE A.account_way WHEN '0' THEN '무통장입금' WHEN '1' THEN '카드결제' WHEN '2' THEN '휴대폰결제' WHEN '3' THEN '현장결제' END as account_way
+				, FORMAT(IF(C.coupon_div is null, A.menu_price * A.member, IF(C.coupon_div = '0', (A.menu_price * A.member) - C.coupon_price, (A.menu_price * A.member) / C.coupon_price )), 0) as price
+				, CAST(DATE_FORMAT(A.reg_cdd,'%Y-%m-%d') AS CHAR(10)) as reg_cdd
+				, CAST(DATE_FORMAT(A.registerdt,'%p %r') AS CHAR(8)) as reg_cdt
+				, '엘루비 스토어' as product_name
+				, 'store' as product
+				
+			FROM schedule_info A
+	  INNER JOIN client_store B
+	  		  ON A.store_seq = B.store_seq
+ LEFT OUTER JOIN coupon_info C
+ 			  ON A.coupon_seq = C.coupon_seq
+		   WHERE A.user_seq = #{user_seq}
+			 AND A.delete_yn = '0'
+			 AND A.status IN ('1', '2')
+		ORDER BY A.registerdt DESC
+		   LIMIT ${page}, ${row}
+		   
+	</select>
+	
+	<!-- 현재 예매내역 중에서 gathering_schedule_info 혹은 schedule_info -->
+	<select id="select_ticket_count" parameterType="hashmap" resultType="String">
+		
+		SELECT
+				COUNT(*) as cnt
+			
+		  FROM ${table}
+		 WHERE user_seq = #{user_seq}
+		   AND delete_yn = '0'
+		   AND status IN ('1', '2')
+	</select>
+	
+	<!-- 현재 예매내역 중에서 전체 -->
+	<select id="select_all_ticket_count" parameterType="hashmap" resultType="String">
+		
+		SELECT
+			
+			(SELECT COUNT(*) FROM gathering_schedule_info WHERE user_seq = #{user_seq} AND delete_yn = '0' AND status IN ('1', '2'))	+
+			(SELECT COUNT(*) FROM schedule_info WHERE user_seq = #{user_seq} AND delete_yn = '0' AND status IN ('1', '2'))
+
+		  FROM DUAL
+		  
+	</select>
+	
+	
+	<!-- 한개의 결제 내역 확인 -->
+	<select id="select_reservation_account_one" parameterType="hashmap" resultType="AccountInfoModel">
+		
+		SELECT
+			coupon_seq as coupon_seq
+		
+		  FROM ${table}
+		 WHERE schedule_seq = #{schedule_seq}
+		
+	</select>
+	
+<!-- BUTTON EVENT -->
+<!-- 이용자가 예약 취소 -->
+	<update id="update_reservation_cancel" parameterType="hashmap">
+		
+		UPDATE ${table}
+		   SET status = '4'
+			   , cancel_user_seq = #{user_seq}
+			   , cancel_registerdt = CURRENT_TIMESTAMP
+		 WHERE schedule_seq = #{schedule_seq}
+		
+	</update>
+	
+<!-- 사용완료 후 평가 -->
+	<update id="update_product_point" parameterType="hashmap">
+		
+		UPDATE ${table}
+		   SET point = #{point}
+		 WHERE schedule_seq = #{schedule_seq}
+		   AND user_seq = #{user_seq}
+		
+	</update>
+<!-- BUTTON EVENT END -->
+	
+	
+<!-- COUPON -->
+	<select id="select_coupon_list" parameterType="hashmap" resultType="CouponInfoModel">
+	
+		SELECT
+		
+			coupon_name
+			, CASE coupon_div WHEN '0' THEN CONCAT(FORMAT(coupon_price,0),"원") WHEN '1' THEN CONCAT(coupon_price,"%") END as coupon_price
+			, CONCAT(LEFT(coupon_limit, 4),"년 ",SUBSTRING(coupon_limit,6,2),"월 ",RIGHT(coupon_limit,2),"일까지") as coupon_limit
+			, CASE use_yn WHEN '0' THEN '미사용' WHEN '1' THEN '사용완료' END as use_yn
+			
+		  FROM coupon_info
+		 WHERE user_seq = #{user_seq}
+		 <if test="query != ''"> AND use_yn = ${query}</if>
+		 
+	</select>
+	
+	<!-- total_count 및 사용가능한 쿠폰 수 세기 -->
+	<select id="select_coupon_total_count" parameterType="hashmap" resultType="hashmap">
+		SELECT
+			COUNT(*) as total_count
+			, (SELECT
+				COUNT(*)
+				FROM coupon_info
+				WHERE user_seq = #{user_seq}
+				AND use_yn = 0
+				) as unused_count
+		  FROM coupon_info
+		 WHERE user_seq = #{user_seq}
+	   <if test="query != ''"> AND use_yn = ${query}</if>
+	</select>
+	
+	
+</mapper>

@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="client.mapper.ScheduleMapper">	
+	
+	<!-- 예약 신청 -->
+	<insert id="insert_scheduleInfoRegister" parameterType="ScheduleInfoModel" useGeneratedKeys="false" >
+	
+		INSERT INTO schedule_info
+		(
+		`store_seq`
+		,`user_seq`
+		,`schedule_year`
+		,`schedule_month`
+		,`schedule_date`
+		,`schedule_ymd`
+		,`schedule_hour`
+		,`schedule_min`
+		,`schedule_hm`
+		,`menu_name`
+		,`menu_instruction`
+		,`menu_price`
+		,`menu_time`
+		,`user_name`
+		,`member`
+		,`reg_cdd`
+		,`reg_cdt`
+		)
+		VALUES
+		(
+		#{store_seq}
+		,#{user_seq}
+		,#{schedule_year}
+		,#{schedule_month}
+		,#{schedule_date}
+		,#{schedule_ymd}
+		,#{schedule_hour}
+		,#{schedule_min}
+		,#{schedule_hm}
+		,#{menu_name}
+		,#{menu_instruction}
+		,#{menu_price}
+		,#{menu_time}
+		,#{user_name}
+		,#{member}
+		,DATE_FORMAT(now(), '%Y%m%d')
+	    ,DATE_FORMAT(now(), '%H%i%s')
+		)
+		
+	</insert>
+	
+	
+	<!-- 시간별 예약자 명단 -->
+	<select id="select_scheduleTimeTable" parameterType="ScheduleInfoModel" resultType="ScheduleInfoModel">
+		
+		SELECT
+				*
+				
+		  FROM schedule_info
+		 WHERE schedule_year = ${schedule_year}
+		   AND schedule_month = ${schedule_month}
+		   AND schedule_date = ${schedule_date}
+		   AND store_seq = ${store_seq}
+		   AND delete_yn = '0'
+	  ORDER BY schedule_hm ASC
+	  
+	</select>
+	
+	<select id="select_scheduleMember" parameterType="hashmap" resultType="ScheduleInfoModel">
+		
+		SELECT
+				*
+		  FROM schedule_info
+		 WHERE schedule_seq IN 
+		<foreach collection="array" item="item" index="index" separator="," open="(" close=")">
+			#{item}
+		</foreach>
+	
+	</select>
+	
+	<!-- 5분 지나도 컨펌 안 된 건에 대한 삭제 -->
+	<delete id="delete_temporary_schedule">
+		DELETE 
+		  FROM schedule_info 
+		 WHERE UNIX_TIMESTAMP(NOW()) - UNIX_TIMESTAMP(registerdt) > 300
+		   AND confirm_yn = '0'  
+	</delete>
+	
+	<!-- 5분 아직 안 지난 결제내용들 중에서 취소하고 다시 진행 -->
+	<delete id="delete_temporary_schedule_by_user" parameterType="String">
+		DELETE
+		  FROM schedule_info
+		 WHERE schedule_seq = #{schedule_seq}
+	</delete>
+	
+	<!-- 5분이 아직 안 지난 결제내용들 중에서 같은 상점에 같은 사람이 이미 결제를 진행하던 것이 있었는지를 체크 -->
+	<select id="select_temporary_schedule" parameterType="hashmap" resultType="hashmap">
+		
+		SELECT
+			
+			CASE WHEN
+			COUNT(*) > 0 THEN 'Y' ELSE 'N' END AS isCheck
+			, schedule_seq
+			
+		  FROM schedule_info
+		 WHERE 300 > UNIX_TIMESTAMP(NOW()) - UNIX_TIMESTAMP(registerdt) 
+		   AND store_seq = #{store_seq}
+		   AND user_seq = #{user_seq}
+		   AND confirm_yn = '0'
+	</select>
+	
+	<select id="select_temporary_schedule_one" parameterType="hashmap" resultType="ScheduleInfoModel">
+		
+		SELECT
+			schedule_seq
+			, menu_name
+			, menu_instruction
+			, schedule_year
+			, schedule_month
+			, schedule_date
+			, schedule_hm
+			, menu_time
+			, member
+			, FORMAT(member * menu_price,0) as menu_price
+		
+		FROM schedule_info
+		 WHERE 300 > UNIX_TIMESTAMP(NOW()) - UNIX_TIMESTAMP(registerdt) 
+		   AND store_seq = #{store_seq}
+		   AND user_seq = #{user_seq}
+		   AND confirm_yn = '0'
+	</select>
+	
+	<update id="update_temporary_schedule" parameterType="String">
+		UPDATE schedule_info
+	   	   SET confirm_yn = '1'
+	   	 WHERE schedule_seq = #{schedule_seq}
+		
+	</update>
+	
+</mapper>

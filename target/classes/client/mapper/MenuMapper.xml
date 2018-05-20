@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="client.mapper.MenuMapper">	
+	
+	<select id="select_menuInfo" parameterType="MenuInfoModel" resultType="MenuInfoModel">
+
+		SELECT
+		
+			menu_seq
+			, store_seq
+			, menu_name
+			, menu_instruction
+			, FORMAT(menu_price,0) as menu_price
+			, menu_time
+			, menu_day
+			
+ 		  FROM client_menu
+		 WHERE store_seq = #{store_seq}
+		   AND delete_yn = 0
+
+	</select>
+	
+	<select id="select_menuInfo_one" parameterType="MenuInfoModel" resultType="MenuInfoModel">
+
+		SELECT
+			
+			menu_name
+			, menu_instruction
+			, menu_price
+			, menu_time
+			, menu_day
+			
+ 		  FROM client_menu
+		 WHERE store_seq = #{store_seq}
+		   AND menu_seq = #{menu_seq}
+		   AND delete_yn = 0
+
+	</select>
+	
+	
+	<insert id="insert_menuInfo" parameterType="MenuInfoModel" useGeneratedKeys="true" keyProperty="menu_seq">
+	
+	INSERT INTO client_menu
+		(
+		`store_seq`
+		,`menu_name`
+		,`menu_instruction`
+		,`menu_price`
+		,`menu_time`
+		,`menu_day`
+		,`reg_cdd`
+		,`reg_cdt`
+		)
+		VALUES
+		(
+		#{store_seq}
+		, #{menu_name}
+		, #{menu_instruction}
+		, #{menu_price}
+		, #{menu_time}
+		, #{menu_day}
+		,DATE_FORMAT(now(), '%Y%m%d')
+	    ,DATE_FORMAT(now(), '%H%i%s')
+		)
+	
+	</insert>
+	
+	<update id="update_menuInfoDeleteYN" parameterType="MenuInfoModel">
+	
+		UPDATE client_menu
+
+	   	   SET delete_yn = #{delete_yn}
+
+	   	 WHERE client_seq = #{client_seq}
+	   	   AND menu_seq = #{menu_seq}
+
+	</update>
+	
+	<update id="update_menuInfoModify" parameterType="MenuInfoModel">
+			UPDATE client_menu
+			<set>
+		   		<if test="menu_name != null">menu_name = #{menu_name},</if>
+				<if test="menu_instruction != null">menu_instruction = #{menu_instruction},</if>
+				<if test="menu_price != null">menu_price = #{menu_price},</if>
+				<if test="menu_time != null">menu_time = #{menu_time},</if>
+				<if test="menu_day != null">menu_day = #{menu_day},</if>
+			</set>
+		 	WHERE store_seq = #{store_seq}
+		   	  AND menu_seq = #{menu_seq}	
+	</update>
+	
+	
+	
+	
+</mapper>

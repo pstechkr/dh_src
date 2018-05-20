@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE configuration
+  PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-config.dtd">
+
+<configuration>
+	<properties resource="mybatis/config/db.properties"/>
+
+	<typeAliases>
+		<!-- CLIENT 관련 -->
+		<typeAlias alias="ClientInfoModel" type="client.model.ClientInfoModel"/>
+		<typeAlias alias="ClientLoginModel" type="client.model.ClientLoginModel"/>
+		<typeAlias alias="StoreInfoModel" type="client.model.StoreInfoModel"/>
+		<typeAlias alias="CustomRsvInfoModel" type="client.model.CustomRsvInfoModel" />
+		<typeAlias alias="MenuInfoModel" type="client.model.MenuInfoModel" />
+		<typeAlias alias="ScheduleInfoModel" type="client.model.ScheduleInfoModel" />
+		<typeAlias alias="TimeTableModel" type="client.model.TimeTableModel" />
+		
+		<!-- USER 관련 -->
+		<typeAlias alias="UserInfoModel" type="user.model.UserInfoModel" /> <!-- 이용자 정보 -->
+		<typeAlias alias="TicketInfoModel" type="user.model.TicketInfoModel" /> <!-- 티켓내역 및 구매내역 목록 -->
+		<typeAlias alias="AccountInfoModel" type="user.model.AccountInfoModel" /> <!-- 한개의 결제 내역 -->
+		
+		<!-- COMMUNITY 관련 -->
+		<typeAlias alias="ReviewInfoModel" type="community.model.ReviewInfoModel" /> <!-- 맛집 리뷰 정보 -->
+		
+		<!-- Gathering 관련 -->
+		<typeAlias alias="GatheringInfoModel" type="gathering.model.GatheringInfoModel" /> <!-- 게더링 등록 수정 등 -->
+		<typeAlias alias="GatheringScheduleInfoModel" type="gathering.model.GatheringScheduleInfoModel" /> <!-- Gathering 스케줄 등록 -->
+		<typeAlias alias="GatheringMemberInfoModel" type="gathering.model.GatheringMemberInfoModel" /> <!-- Gathering 신청자 관리 -->
+		
+		
+		<!-- 부가 서비스 -->
+		<typeAlias alias="CouponInfoModel" type="service.model.CouponInfoModel" /> <!-- 쿠폰 관리 -->
+		<typeAlias alias="TagInfoModel" type="service.model.TagInfoModel" /> <!-- 태그 -->
+		<typeAlias alias="SliderInfoModel" type="service.model.SliderInfoModel" /> <!-- 슬라이드 -->
+		
+	</typeAliases>
+
+	<environments default="development">
+		<environment id="development">
+			<transactionManager type="JDBC"/>
+			<dataSource type="POOLED">
+				<property name="driver" value="${driver}"/>
+				<property name="url" value="${url}"/>
+				<property name="username" value="${username}"/>
+				<property name="password" value="${password}"/>
+      		</dataSource>
+		</environment>
+	</environments>
+	
+	<mappers>
+		<!-- client -->
+		<mapper resource="client/mapper/ClientMapper.xml"/>
+		<mapper resource="client/mapper/StoreMapper.xml"/>
+		<mapper resource="client/mapper/CustomRsvMapper.xml"/>
+		<mapper resource="client/mapper/MenuMapper.xml"/>
+		<mapper resource="client/mapper/ScheduleMapper.xml"/>
+		
+		<!-- community -->
+		<mapper resource="community/mapper/AdminReviewMapper.xml" />
+		<mapper resource="community/mapper/UserReviewMapper.xml" />
+		
+		<!-- user -->
+		<mapper resource="user/mapper/UserMapper.xml"/>
+		<mapper resource="user/mapper/MypageMapper.xml"/>
+		
+		<!-- gathering -->
+		<mapper resource="gathering/mapper/AdminGatheringMapper.xml"/>
+		<mapper resource="gathering/mapper/UserGatheringMapper.xml"/>
+		
+		<!-- service -->
+		<mapper resource="service/mapper/SliderMapper.xml"/>
+		<mapper resource="service/mapper/CouponMapper.xml"/>
+		
+	</mappers>
+  
+</configuration>

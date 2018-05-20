@@ -1,0 +1,301 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="user.mapper.UserMapper">	
+
+	<!-- 이메일 체크 -->
+	<select id="select_email_check" parameterType="hashmap" resultType="boolean">
+		
+		SELECT 
+			CASE WHEN
+			COUNT(*) > 0 THEN true ELSE false END AS isCheck
+			
+		  FROM user_info
+		 WHERE user_email = #{user_email}
+		
+	</select>
+
+	<!-- 회원가입 -->
+	<insert id="insert_userInfoRegister" parameterType="UserInfoModel" useGeneratedKeys="true" keyProperty="user_seq">
+  		INSERT INTO user_info
+		(
+		`user_email`
+		,`user_password`
+		,`user_name`
+		,`user_gender`
+		,`user_birthday`
+		,`user_phoneno`
+		,`reg_cdd`
+		,`reg_cdt`
+		)
+		VALUES
+		(
+		#{user_email}
+		,#{user_password}
+		,#{user_name}
+		,#{user_gender}
+		,#{user_birthday}
+		,#{user_phoneno}
+		,DATE_FORMAT(now(), '%Y%m%d')
+	    ,DATE_FORMAT(now(), '%H%i%s')
+		)
+	</insert>
+	
+	
+	<!-- 페이스북 id 중복 여부 판별 -->
+	<select id="select_facebookid_check_facebook" parameterType="hashmap" resultType="hashmap">
+		
+		SELECT
+			CASE WHEN COUNT(*) > 0 THEN 'true' ELSE 'false' END AS isCheck
+		  FROM user_info
+		 WHERE facebook_id = #{facebook_id}
+		   AND delete_yn = '0'	
+	
+	</select>
+	
+	<!-- 페이스북 이메일로 페이스북 연동 여부 판별 -->
+	<select id="select_email_check_facebook" parameterType="hashmap" resultType="hashmap">
+		
+		SELECT 
+			CASE WHEN COUNT(*) > 0 THEN 'true' ELSE 'false' END AS isCheck
+			, facebook_id
+			
+		  FROM user_info
+		 WHERE user_email = #{user_email}
+		   AND delete_yn = '0'
+		
+	</select>
+	
+	<!-- 기존의 아이디와 페이스북 연동 -->
+	<update id="update_userInfoRegister_facebookid_facebook" parameterType="UserInfoModel">
+		
+		UPDATE user_info
+		SET
+			facebook_id = #{facebook_id}
+		WHERE user_email = #{user_email}
+		  AND delete_yn = '0'
+	</update>
+	
+	<update id="update_userInfoRegister_email_facebook" parameterType="UserInfoModel">
+		
+		UPDATE user_info
+		SET
+			user_email = #{user_email}
+		WHERE facebook_id = #{facebook_id}
+		  AND delete_yn = '0'
+	</update>
+	
+	<!-- 페이스북 회원가입 -->
+	<insert id="insert_userInfoRegister_facebook" parameterType="UserInfoModel" useGeneratedKeys="true" keyProperty="user_seq">
+		
+		INSERT INTO user_info
+		(
+		`user_email`
+		,`user_name`
+		,`user_gender`
+		,`user_birthday`
+		,`facebook_id`
+		,`reg_cdd`
+		,`reg_cdt`
+		)
+		VALUES
+		(
+		#{user_email}
+		,#{user_name}
+		,#{user_gender}
+		,#{user_birthday}
+		,#{facebook_id}
+		,DATE_FORMAT(now(), '%Y%m%d')
+	    ,DATE_FORMAT(now(), '%H%i%s')
+		)
+	</insert>
+	
+	<!-- 페이스북 로그인 -->
+	<select id="select_userInfoLogin_facebook" parameterType="UserInfoModel" resultType="UserInfoModel">
+		
+		SELECT 
+		
+			CASE WHEN COUNT(*) > 0 THEN true ELSE false END as success
+			, user_seq as user_seq
+			, user_name as user_name
+			
+		  FROM user_info
+		 WHERE user_email = #{user_email}
+		   AND facebook_id = #{facebook_id}
+		   AND delete_yn = 0
+		
+		
+	</select>
+	
+	
+	<!-- 로그인 -->
+	<select id="select_userInfoLogin" parameterType="UserInfoModel" resultType="UserInfoModel">
+		
+		SELECT 
+		
+			CASE WHEN COUNT(*) > 0 THEN true ELSE false END as success
+			, user_seq as user_seq
+			, user_name as user_name
+		  
+		  FROM user_info
+		 WHERE user_email = #{user_email}
+		   AND user_password = #{user_password}
+		   AND delete_yn = 0
+	
+	</select>
+	
+	<!-- 최근 로그인 이력 업데이트 -->
+	<update id="update_userInfo_recentLogin" parameterType="UserInfoModel">
+		
+		UPDATE user_info
+		
+		SET
+			recent_login = CURRENT_TIMESTAMP
+		
+		WHERE user_seq = #{user_seq}
+		
+	</update>
+	
+	
+	
+	<!-- 비밀번호 찾기 시 새로운 비밀번호를 업데이트 -->
+	<update id="update_findpassword" parameterType="hashmap">
+		
+		UPDATE user_info
+		
+		SET
+			user_password = #{user_password}	
+	
+		WHERE user_email = #{user_email}
+	
+	</update>
+	
+	<!-- 회원 정보 불러오기 -->
+	<select id="select_userInfo" parameterType="UserInfoModel" resultType="UserInfoModel">
+		
+		SELECT
+				user_email
+				, user_password
+				, user_name
+				, user_gender
+				, user_birthday
+				, user_phoneno
+				
+		FROM user_info
+		WHERE user_seq = #{user_seq}
+		  AND delete_yn = 0
+		
+	</select>
+	
+	
+	<!-- 회원정보 수정 -->
+	<update id="update_userInfo" parameterType="UserInfoModel">
+		
+		UPDATE user_info
+	
+		<set>
+			<if test="user_password != ''">user_password = #{user_password},</if>
+			<if test="user_name != ''">user_name = #{user_name},</if>
+			<if test="user_phoneno != ''">user_phoneno = #{user_phoneno},</if>
+			<if test="user_birthday != ''">user_birthday = #{user_birthday},</if>
+		</set>
+
+		WHERE user_seq = #{user_seq}
+		  AND delete_yn = 0
+	</update>	
+	
+	<!-- mypage > modify 로 들어가기 위해 아이디 비밀번호 다시 확인 -->
+	<select id="select_checkModify" parameterType="UserInfoModel" resultType="UserInfoModel">
+		
+		SELECT 
+		
+			CASE WHEN COUNT(*) > 0 THEN true ELSE false END as success
+			
+		  FROM user_info
+		 WHERE user_seq = #{user_seq}
+		   AND user_password = #{user_password}
+		   AND delete_yn = 0
+	
+	</select>
+	<!-- mypage > checkModify / facebook과 general 구분을 위해 -->
+	<select id="select_user_division" parameterType="String" resultType="String">
+		
+		SELECT
+	
+			IF(NOT ISNULL(facebook_id) AND NOT ISNULL(user_password), 'both'
+			, IF(ISNULL(facebook_id) AND NOT ISNULL(user_password), 'general'
+			, IF(NOT ISNULL(facebook_id) AND ISNULL(user_password), 'facebook', NULL))) as division
+	 	  
+	 	  FROM user_info
+		 WHERE user_seq = #{user_seq}
+		
+	</select>
+	
+	<!-- ADMIN -->
+	<!-- 이용자 리스트 select -->
+	<select id="select_userInfoList" parameterType="hashmap" resultType="UserInfoModel">
+		
+		SELECT
+			user_seq
+			, user_email
+			, user_name
+			, CASE user_gender WHEN '0' THEN '남성' WHEN '1' THEN '여성' END as user_gender
+			, user_birthday
+			, user_phoneno
+			, facebook_id
+			, CAST(DATE_FORMAT(reg_cdd,'%Y-%m-%d') AS CHAR(10)) as reg_cdd
+			, CAST(DATE_FORMAT(recent_login,'%Y-%m-%d') AS CHAR(10)) as recent_cdd
+			, CAST(DATE_FORMAT(recent_login,'%p %r') AS CHAR(11)) as recent_cdt
+			
+		  FROM user_info
+		 WHERE delete_yn = '0'
+	  ORDER BY user_seq DESC
+		 LIMIT ${page}, ${row}
+		 
+	</select>
+	
+	<!-- 페이지 번호 -->
+	<select id="select_user_pagination" parameterType="hashmap" resultType="hashmap">
+		
+		SELECT
+			CONCAT(CEIL(COUNT(*)/${row})) as total_pagination
+			, CONCAT(CEIL(CEIL(COUNT(*)/${row})/${pagination_row})) as divide_pagination
+			
+		  FROM user_info
+		 WHERE delete_yn = '0'
+		
+	</select>
+			
+		
+	
+	<!-- 
+	<update id="update_clientInfo_license_pic" parameterType="ClientInfoModel">
+
+		UPDATE client_info
+	   	   SET client_license_pic = #{client_license_pic}
+	   	 WHERE client_seq = #{client_seq}
+	   	
+	</update>
+	
+	<select id="select_clientInfoLogin" parameterType="ClientLoginModel" resultType="ClientLoginModel">
+		
+		SELECT 
+		
+			CASE WHEN
+			COUNT(*) > 0 THEN true ELSE false END AS success
+			, client_name AS client_name
+			, client_seq AS client_seq
+			, (SELECT store_seq 
+				 FROM client_store B
+				 WHERE A.client_seq = B.client_seq) AS store_seq
+		  
+		  FROM client_info A
+		 WHERE client_email = #{client_email}
+		   AND client_password = #{client_password}
+		   AND delete_yn = 0
+	
+	</select>
+	  -->
+</mapper>

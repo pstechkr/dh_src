@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans:beans xmlns="http://www.springframework.org/schema/security"	
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:beans="http://www.springframework.org/schema/beans"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+		http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/security
+		http://www.springframework.org/schema/security/spring-security.xsd
+		">
+		
+<http pattern="/resources/**" security="none" />
+
+
+<http auto-config="true" use-expressions="true">
+	
+	<!-- 주의 : http 가 맨 아래에 있어야 제대로 읽음 -->
+	<intercept-url pattern="/join" access="permitAll" requires-channel="https" />
+	<intercept-url pattern="/email_check" access="permitAll" requires-channel="https" />
+	<intercept-url pattern="/register" access="permitAll" requires-channel="https" />
+	<intercept-url pattern="/fbchrome" access="permitAll" requires-channel="https" />
+	<intercept-url pattern="/home" access="permitAll" requires-channel="https" />
+	
+	<intercept-url pattern="/login" access="permitAll" requires-channel="https" />
+	<intercept-url pattern="/loginRequest" access="permitAll" requires-channel="https" />
+	<intercept-url pattern="/facebookLogin" access="permitAll" requires-channel="https" />
+	
+	<intercept-url pattern="/gathering/**" access="permitAll" requires-channel="https" />
+	
+	
+	<intercept-url pattern="/mypage/checkModify" access="permitAll" requires-channel="https" />
+	<intercept-url pattern="/mypage/modify" access="permitAll" requires-channel="https" />
+	<intercept-url pattern="/mypage/modifyRequest" access="permitAll" requires-channel="https" />
+	
+	<!--  관리자 페이지 -->
+	<intercept-url pattern="/admin/**" access="hasRole('ROLE_ADMIN')" />
+	<logout invalidate-session="true" logout-url="/admin/unAuth" logout-success-url="/" />
+	
+	<intercept-url pattern="/**" access="permitAll" requires-channel="http" />
+</http>
+
+
+<authentication-manager>
+	<authentication-provider>
+		<user-service>
+			<!-- ROLE_접두어 붙여 사용할 것 :: 만약 ROLE_이란 접두어로 시작하지 않는다면 시큐리티는 접근 보류(ACCESS_ABSTAIN) -->
+			<user name="tiein" password="tiein2014" authorities="ROLE_ADMIN"/>	
+		</user-service>
+	</authentication-provider>
+</authentication-manager>
+
+
+</beans:beans>

@@ -1,0 +1,20 @@
+@charset "UTF-8";
+/* webfont */
+/*@font-face {
+  font-family: 'Nanum Barun Gothic';
+  font-style: normal;
+  font-weight: 700;
+  src: url(../webfont/NanumBarunGothicBold.eot);
+  src: url(../webfont/NanumBarunGothicBold.eot?#iefix) format('embedded-opentype'),
+       url(../webfont/NanumBarunGothicBold.woff) format('woff'),
+       url(../webfont/NanumBarunGothicBold.ttf) format('truetype');
+}*/
+@font-face {
+  font-family: 'Nanum Barun Gothic';
+  font-style: normal;
+  font-weight: 400;
+  src: url(../webfont/NanumBarunGothic.eot);
+  src: url(../webfont/NanumBarunGothic.eot?#iefix) format('embedded-opentype'),
+       url(../webfont/NanumBarunGothic.woff) format('woff'),
+       url(../webfont/NanumBarunGothic.ttf) format('truetype');
+}

@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="service.mapper.SliderMapper">	
+
+    <!-- 슬라이드 이미지 및 내용 입력 -->
+	<insert id="insert_sliderInfo" parameterType="SliderInfoModel" useGeneratedKeys="false">
+		
+		INSERT INTO slider_info
+		(
+		`slider_image`
+		,`slider_link`
+		,`slider_comment`
+		)
+		VALUES
+		(
+		#{slider_image}
+		,#{slider_link}
+		,#{slider_comment}
+		)
+	</insert>
+	
+	<!-- 슬라이드 출력 -->
+	<select id="select_sliderInfo" resultType="SliderInfoModel">
+		
+		SELECT
+		
+			slider_image
+			, slider_link
+			, slider_comment
+		
+		FROM slider_info
+	ORDER BY slider_seq DESC
+	   LIMIT 0,1 
+	</select>
+	
+</mapper>

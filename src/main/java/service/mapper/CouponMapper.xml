@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="service.mapper.CouponMapper">	
+
+    <!-- 쿠폰 등록 -->
+	<insert id="insert_couponInfo" parameterType="CouponInfoModel" useGeneratedKeys="false">
+		
+		INSERT INTO coupon_info
+		(
+		`user_seq`
+		,`coupon_id`
+		,`coupon_name`
+		,`coupon_limit`
+		,`coupon_price`
+		,`coupon_div`
+		)
+		VALUES
+		(
+		#{user_seq}
+		,#{coupon_id}
+		,#{coupon_name}
+		,#{coupon_limit}
+		,#{coupon_price}
+		,#{coupon_div}
+		)
+	</insert>
+	
+	<!-- 전체 쿠폰 리스트 리스트 출력 -->
+	<select id="select_couponList_one" parameterType="String" resultType="CouponInfoModel">
+		
+		SELECT
+		
+			coupon_id
+			, coupon_name
+			, coupon_price
+			, coupon_div
+		
+		FROM coupon_info
+	   WHERE use_yn = '0'
+	     AND CONCAT(coupon_limit) >= DATE_FORMAT(now(),'%Y-%m-%d')
+	     AND user_seq = #{user_seq} 
+		
+	</select>
+	
+	<!-- 선택한 쿠폰에 따른 가격 확인 -->
+	<select id="select_coupon_id_seq" parameterType="CouponInfoModel" resultType="String">
+		
+		SELECT
+			
+			coupon_seq
+			
+		FROM coupon_info
+	   WHERE use_yn = "0"
+     	 AND CONCAT(coupon_limit) >= DATE_FORMAT(now(),'%Y-%m-%d')
+     	 AND user_seq = #{user_seq}
+     	 AND coupon_id = #{coupon_id}
+		
+	</select>
+	
+	<!-- 쿠폰 사용 -->
+	<update id="update_couponUse" parameterType="hashmap">
+		
+		UPDATE coupon_info	
+		   SET use_yn = "1"
+		   	  ,use_registerdt = CURRENT_TIMESTAMP
+		   	  ,use_schedule_seq = #{schedule_seq}
+		   	  ,use_product = #{product}
+   	  	 WHERE coupon_id = #{coupon_id}
+		
+	</update>
+	
+	<!-- 쿠폰 재발급 -->
+	<insert id="insert_rsv_cancel_recreate" parameterType="hashmap">
+		
+		INSERT INTO coupon_info
+		(
+		`user_seq`
+		,`coupon_id`
+		,`coupon_name`
+		,`coupon_limit`
+		,`coupon_price`
+		,`coupon_div`
+		)
+		SELECT
+			#{user_seq}
+			, #{coupon_id}
+			, coupon_name
+			, coupon_limit
+			, coupon_price
+			, coupon_div
+		FROM coupon_info
+	   WHERE coupon_seq = #{coupon_seq}
+		
+		
+	</insert>
+	
+	
+	<!-- AdminUser에서 쿠폰 발급 -->
+	<insert id="insert_couponInfo_user" parameterType="CouponInfoModel" useGeneratedKeys="false">
+		
+		
+		INSERT INTO coupon_info
+		(
+		`user_seq`
+		,`coupon_id`
+		,`coupon_name`
+		,`coupon_limit`
+		,`coupon_price`
+		,`coupon_div`
+		)
+		VALUES
+		<foreach collection="list" item="item" separator=",">			
+			(
+			#{item.user_seq}
+			,#{item.coupon_id}
+			,#{item.coupon_name}
+			,#{item.coupon_limit}
+			,#{item.coupon_price}
+			,#{item.coupon_div}
+			)
+		</foreach>
+
+
+	</insert>
+	
+	
+</mapper>

@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="client.mapper.CustomRsvMapper">	
+	
+	
+	<select id="select_customRsvInfo" parameterType="hashmap" resultType="hashmap">
+		SELECT 
+			store_seq
+			, client_seq
+			, custom_rsv_ymd
+			, custom_rsv_year
+			, custom_rsv_month
+			, custom_rsv_date
+			, custom_rsv_switch
+			
+ 		  FROM client_custom_reservation
+		 WHERE store_seq = #{store_seq}
+		   AND custom_rsv_year = #{custom_rsv_year}
+		   AND custom_rsv_month = #{custom_rsv_month}
+	</select>
+	
+	
+	<select id="select_customRsvInfoYN" parameterType="CustomRsvInfoModel" resultType="String">
+		SELECT
+			custom_rsv_switch
+		
+		  FROM client_custom_reservation
+		 WHERE store_seq = #{store_seq}
+		   AND custom_rsv_year = #{custom_rsv_year}
+		   AND custom_rsv_month = #{custom_rsv_month}
+		   AND custom_rsv_date = #{custom_rsv_date}
+	
+	</select>
+	
+	<insert id="insert_customRsvInfo" parameterType="CustomRsvInfoModel" useGeneratedKeys="false" >
+	
+	INSERT INTO client_custom_reservation
+		(
+		`store_seq`
+		,`client_seq`
+		,`custom_rsv_year`
+		,`custom_rsv_month`
+		,`custom_rsv_date`
+		,`custom_rsv_ymd`
+		,`custom_rsv_switch`
+		,`reg_cdd`
+		,`reg_cdt`
+		)
+		VALUES
+		(
+		#{store_seq}
+		, #{client_seq}
+		, #{custom_rsv_year}
+		, #{custom_rsv_month}
+		, #{custom_rsv_date}
+		, #{custom_rsv_ymd}
+		, #{custom_rsv_switch}
+		,DATE_FORMAT(now(), '%Y%m%d')
+	    ,DATE_FORMAT(now(), '%H%i%s')
+		)
+	
+	</insert>
+	
+	
+	<update id="update_customRsvInfo" parameterType="CustomRsvInfoModel">
+	
+		UPDATE client_custom_reservation 
+		
+		   SET custom_rsv_switch = #{custom_rsv_switch}
+		  
+		 WHERE store_seq = #{store_seq}
+		   AND custom_rsv_year = #{custom_rsv_year}
+		   AND custom_rsv_month = #{custom_rsv_month}
+		   AND custom_rsv_date = #{custom_rsv_date}
+
+	</update>	
+	
+	<delete id="delete_customRsvInfo" parameterType="CustomRsvInfoModel">
+	
+		DELETE
+
+		  FROM client_custom_reservation
+		 WHERE store_seq = #{store_seq}
+		   AND custom_rsv_year = #{custom_rsv_year}
+		   AND custom_rsv_month = #{custom_rsv_month}
+		   AND custom_rsv_date = #{custom_rsv_date}
+
+	</delete>	
+</mapper>

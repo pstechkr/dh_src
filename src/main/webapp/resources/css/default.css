@@ -1,0 +1,35 @@
+@charset "UTF-8";
+/* reset */
+body{font-family:'나눔고딕','Nanum Gothic', sans-serif;}
+*{margin:0;padding:0;} 
+/*font-family:'나눔고딕','Nanum Barun Gothic',sans-serif;*/
+html,body{width:100%;height:100%;font-size:14px;color:#787879;letter-spacing:-1px;}
+html,body,header,section,footer,nav,article,aside,div,p,span,ul,li,ol,h1,h2,h3,h4,h5,h6,form,input,selector{margin:0;padding:0;}
+address,article,aside,details,figcaption,figure,footer,header,hgroup,main,nav,section,summary{display:block;}
+address{font-style:normal;}
+p,span{display:inline-block}
+ul,li,ol{list-style:none}
+
+/* link style */
+a:link,a:visited{color:#787879;text-decoration:none;}
+a:active,a:hover{outline:0;color:#787879;}
+button{cursor:pointer;-webkit-appearance: none;}
+
+/* input style */
+fieldset{border:0;}
+legend{font-size:0;text-indent:-9999px;}
+input,select,textarea{vertical-align:middle;}
+input[type="text"],input[type="password"]{outline-style:none;}
+input[type="submit"],input[type="button"]{cursor:pointer;}
+span.button,img.button,a.button{cursor:pointer;vertical-align:middle;}
+
+/* text style */
+b,strong{font-weight:bold;}
+em{font-style:normal;font-weight:bold;}
+
+/* image style */
+img,a img,input-type-image{border:0 none;}
+
+/* table style */
+table,tr,td,thead,tbody,tfoot{margin:0;padding:0;border:0 none;border-spacing:0;}
+table caption{display:none;}

@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE tiles-definitions PUBLIC
+       "-//Apache Software Foundation//DTD Tiles Configuration 3.0//EN"
+       "http://tiles.apache.org/dtds/tiles-config_3_0.dtd">
+<tiles-definitions>
+ 
+    <!-- 관리자 페이지 -->
+    <definition name="adminTemplate" template="/WEB-INF/views/admin/template/admin_template.jsp">
+    	<put-attribute name="general_head" value="/WEB-INF/views/default/general_head.jsp" />
+    	<put-attribute name="head" value="/WEB-INF/views/admin/template/head.jsp" />
+    	<put-attribute name="title" expression="" type="String" />
+        <put-attribute name="header" value="/WEB-INF/views/admin/template/admin_header.jsp" />
+        <put-attribute name="footer" value="/WEB-INF/views/default/not_analytics_footer.jsp" />
+    </definition>
+    
+     
+     
+     
+  	<!-- 사장님 페이지 -->
+    <definition name="clientTemplate" template="/WEB-INF/views/client/template/template.jsp">
+    	<put-attribute name="title" expression="" type="String" />
+        <put-attribute name="header" value="/WEB-INF/views/client/template/header.jsp" />
+        <put-attribute name="footer" value="/WEB-INF/views/default/footer.jsp" />
+    </definition>
+    
+    
+    
+    <!-- 상점 페이지 -->
+    <definition name="storeTemplate" template="/WEB-INF/views/user/template/store_template.jsp">
+    	<put-attribute name="general_head" value="/WEB-INF/views/default/general_head.jsp" />
+    	<put-attribute name="head" value="/WEB-INF/views/user/template/head.jsp" />
+    	<put-attribute name="title" expression="" type="String" />
+        <put-attribute name="header" value="/WEB-INF/views/user/template/nav_header.jsp" />
+        <put-attribute name="menu" value="/WEB-INF/views/user/template/store_menu.jsp" />
+        <put-attribute name="footer" value="/WEB-INF/views/default/footer.jsp" />
+    </definition>
+  	
+  	
+    
+    
+    <!-- 일반 인덱스 페이지 -->
+    <definition name="indexTemplate" template="/WEB-INF/views/user/template/index_template.jsp">
+    	<put-attribute name="title" expression="" type="String" />
+    	<put-attribute name="general_head" value="/WEB-INF/views/default/general_head.jsp" />
+    	<put-attribute name="head" value="/WEB-INF/views/user/template/head.jsp" />
+        <put-attribute name="header" value="/WEB-INF/views/user/template/nav_not_header.jsp" /> <!-- 일단 nav not. -->
+        <put-attribute name="menu" value="/WEB-INF/views/user/template/index_menu.jsp" />
+        <put-attribute name="footer" value="/WEB-INF/views/default/footer.jsp" />
+    </definition>
+  	
+  	
+  	<!-- 메뉴가 없는 일반적인 페이지 -->
+  	<definition name="nomenuTemplate" template="/WEB-INF/views/user/template/nomenu_template.jsp">
+    	<put-attribute name="title" expression="" type="String" />
+    	<put-attribute name="general_head" value="/WEB-INF/views/default/general_head.jsp" />
+    	<put-attribute name="head" value="/WEB-INF/views/user/template/head.jsp" />
+        <put-attribute name="header" value="/WEB-INF/views/user/template/nav_not_header.jsp" />
+        <put-attribute name="footer" value="/WEB-INF/views/default/footer.jsp" />
+    </definition>
+  	
+  	<!-- 고객 개인정보 페이지 -->
+  	<definition name="userTemplate" template="/WEB-INF/views/user/template/user_template.jsp">
+    	<put-attribute name="title" expression="" type="String" />
+    	<put-attribute name="general_head" value="/WEB-INF/views/default/general_head.jsp" />
+    	<put-attribute name="head" value="/WEB-INF/views/user/template/head.jsp" />
+        <put-attribute name="header" value="/WEB-INF/views/user/template/nav_not_header.jsp" />
+        <put-attribute name="menu" value="/WEB-INF/views/user/template/user_menu.jsp" />
+        <put-attribute name="footer" value="/WEB-INF/views/default/footer.jsp" />
+    </definition>
+  
+	<!-- 모임(Gathering) 페이지 -->
+	<definition name="gatheringTemplate" template="/WEB-INF/views/user/template/gathering_template.jsp">
+    	<put-attribute name="title" expression="" type="String" />
+    	<put-attribute name="general_head" value="/WEB-INF/views/default/general_head.jsp" />
+    	<put-attribute name="head" value="/WEB-INF/views/user/template/head.jsp" />
+        <put-attribute name="header" value="/WEB-INF/views/user/template/nav_not_header.jsp" />
+        <put-attribute name="menu" value="/WEB-INF/views/user/template/index_menu.jsp" />
+        <put-attribute name="footer" value="/WEB-INF/views/default/footer.jsp" />
+    </definition>
+  
+  	<!-- 커뮤니티 페이지 -->
+  	<definition name="communityTemplate" template="/WEB-INF/views/user/template/community_template.jsp">
+    	<put-attribute name="title" expression="" type="String" />
+    	<put-attribute name="general_head" value="/WEB-INF/views/default/general_head.jsp" />
+    	<put-attribute name="head" value="/WEB-INF/views/user/template/head.jsp" />
+        <put-attribute name="header" value="/WEB-INF/views/user/template/nav_not_header.jsp" />
+        <put-attribute name="menu" value="/WEB-INF/views/user/template/index_menu.jsp" />
+        <put-attribute name="second_menu" value="/WEB-INF/views/user/template/community_menu.jsp" />
+        <put-attribute name="footer" value="/WEB-INF/views/default/footer.jsp" />
+    </definition>
+  
+  
+</tiles-definitions>

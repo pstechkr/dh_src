@@ -1,0 +1,40 @@
+@charset "UTF-8";
+/* CSS Document */
+header{overflow:hidden;width:100%;}
+#header_wrap{overflow:hidden;width:900px;margin:0 auto;padding:20px 0;}
+#header_wrap h1{float:left;font-size:20px;}
+#header_wrap h1 span{vertical-align:top;margin:8px 0 0 18px;color:#6e6e6e;font-weight:normal;}
+#personal_menu{float:right;margin-top:8px;}
+#personal_menu ul{overflow:hidden;}
+#personal_menu ul li{float:left;height:20px;margin-left:20px;padding-top:2px;padding-left:24px;font-size:14px;}
+#personal_menu .login{padding-top:2px;background:url(../img/header_btn_login.png) no-repeat;}
+#personal_menu .mypage{padding-left:30px;background:url(../img/header_btn_mypage.png) no-repeat;}
+#personal_menu .dibs{background:url(../img/header_btn_bookmark.png) no-repeat;}
+#gnb{width:100%;margin:0 auto;background:#373434;}
+#gnb ul{overflow:hidden;width:840px;margin:0 auto;padding:15px 30px;}
+#gnb ul li{float:left;font-size:16px;margin-left:80px;}
+#gnb ul li:first-child{margin:0;}
+#gnb ul li a{color:#fff !important;}
+#gnb ul li.selected a{color:#dd5858 !important;}
+#gnb ul li a:hover{color:#dd5858 !important;}
+
+#contents{width:900px;margin:0 auto;}
+
+footer{width:100%;background:#707070;}
+footer>section{overflow:hidden;width:801px;margin:0 auto;color:#cdcdcd;font-size:12px;}
+footer>section section{float:left;margin-left:30px;padding:20px 0;}
+footer>section section:first-child{margin:0;}
+footer>section section div{height:44px;padding:8px 0 0 65px;}
+footer>section section div span{line-height:18px;}
+footer>section section div a{color:#cdcdcd !important;}
+footer>section section ul{overflow:hidden;}
+footer>section section ul li{float:left;}
+footer>section section.sitemap div{background:url(../img/footer_elever.png) no-repeat;}
+footer>section section.sitemap div ul{width:250px;}
+footer>section section.sitemap div ul:first-child{margin-bottom:6px;}
+footer>section section.sitemap div ul li{padding:0 10px 0 15px;background:url(../img/footer_bullet_sitemap.png) no-repeat;}
+footer>section section.sitemap div ul li:first-child{padding:0 10px 0 0;background:none;}
+footer>section section.support div{background:url(../img/footer_customer-center.png) no-repeat;}
+footer>section section.sns div{background:url(../img/footer_facebook.png) no-repeat;}
+footer address{width:100%;padding:10px 0;background:#545454;text-align:center;color:#cdcdcd;}
+footer address ul li{display:inline;line-height:18px;}

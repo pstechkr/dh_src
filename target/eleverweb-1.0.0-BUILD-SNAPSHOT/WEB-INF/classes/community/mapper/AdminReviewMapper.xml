@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="community.mapper.AdminReviewMapper">	
+
+    <!-- 모임 입력 -->
+	<insert id="insert_reviewInfo" parameterType="ReviewInfoModel" useGeneratedKeys="true" keyProperty="review_seq">
+		
+		INSERT INTO community_review_info
+		(
+		`review_name`
+		,`review_division`
+		,`review_time`
+		,`review_holiday`
+		,`review_price`
+		,`review_parking`
+		,`review_main_image`
+		,`review_slide_image`
+		,`review_longitude`
+		,`review_latitude`
+		,`review_localtitle`
+		,`review_localname1`
+		,`review_localname2`
+		,`review_localname3`
+		,`review_localname4`
+		)
+		VALUES
+		(
+		#{review_name}
+		,#{review_division}
+		,#{review_time}
+		,#{review_holiday}
+		,#{review_price}
+		,#{review_parking}
+		,#{review_main_image}
+		,#{review_slide_image}
+		,#{review_longitude}
+		,#{review_latitude}
+		,#{review_localtitle}
+		,#{review_localname1}
+		,#{review_localname2}
+		,#{review_localname3}
+		,#{review_localname4}
+		)
+		
+	</insert>
+	
+</mapper>

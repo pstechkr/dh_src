@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="client.mapper.StoreMapper">
+
+	<!-- 상점 등록 -->
+	<insert id="insert_storeInfoRegister" parameterType="ClientInfoModel" useGeneratedKeys="true" keyProperty="store_seq">
+  		INSERT INTO client_store
+		(
+		`client_seq`
+		,`store_name`
+		,`store_contactnumber`
+		)
+		VALUES
+		(
+		#{client_seq}
+		,#{client_companyname}
+		,#{client_contactnumber}
+		)
+	</insert>
+	
+	<!-- 상점 정보 불러오기 -->
+	<select id="select_storeInfo" parameterType="StoreInfoModel" resultType="StoreInfoModel">
+		SELECT
+			store_seq
+			,store_name
+			,store_longitude
+			,store_latitude
+			,store_localtitle
+			,store_localname1
+			,store_localname2
+			,store_localname3
+			,store_localname4
+			,store_contactnumber
+			,store_openinghours1
+			,store_openinghours2
+			,store_breaktime1
+			,store_breaktime2
+			,store_dayoff
+			,store_parkinginfo
+			,store_intromessage
+			,store_point
+			
+		  FROM client_store
+		 WHERE store_seq = #{store_seq}		   
+		 
+	</select>
+	
+	<!-- 상점 예약관리 정보 -->
+	<select id="select_reservationInfo" parameterType="StoreInfoModel" resultType="StoreInfoModel">
+		SELECT
+			reservation_yn
+			,reservation_openinghours1
+			,reservation_openinghours2
+			,reservation_breaktime_yn
+			,reservation_max
+			
+		  FROM client_store
+		 WHERE store_seq = #{store_seq}		   
+		 
+	</select>
+	
+	<!-- 상점정보 수정 -->
+	<update id="update_storeInfoModify" parameterType="StoreInfoModel">
+			UPDATE client_store
+			<set>
+		   		<if test="store_name != null">store_name = #{store_name},</if>
+				<if test="store_longitude != null">store_longitude = #{store_longitude},</if>
+				<if test="store_latitude != null">store_latitude = #{store_latitude},</if>
+				<if test="store_localtitle != null">store_localtitle = #{store_localtitle},</if>
+				<if test="store_localname1 != null">store_localname1 = #{store_localname1},</if>
+				<if test="store_localname2 != null">store_localname2 = #{store_localname2},</if>
+				<if test="store_localname3 != null">store_localname3 = #{store_localname3},</if>
+				<if test="store_localname4 != null">store_localname4 = #{store_localname4},</if>
+				<if test="store_contactnumber != null">store_contactnumber = #{store_contactnumber},</if>
+				<if test="store_openinghours1 != null">store_openinghours1 = #{store_openinghours1},</if>
+				<if test="store_openinghours2 != null">store_openinghours2 = #{store_openinghours2},</if>
+				<if test="store_breaktime1 != null">store_breaktime1 = #{store_breaktime1},</if>
+				<if test="store_breaktime2 != null">store_breaktime2 = #{store_breaktime2},</if>
+				<if test="store_dayoff != null">store_dayoff = #{store_dayoff},</if>
+				<if test="store_parkinginfo != null">store_parkinginfo = #{store_parkinginfo},</if>
+				<if test="store_intromessage != null">store_intromessage = #{store_intromessage},</if>
+				<if test="store_point != null">store_point = #{store_point},</if>
+				<if test="reservation_yn != null">reservation_yn = #{reservation_yn},</if>
+				<if test="reservation_openinghours1 != null">reservation_openinghours1 = #{reservation_openinghours1},</if>
+				<if test="reservation_openinghours2 != null">reservation_openinghours2 = #{reservation_openinghours2},</if>
+				<if test="reservation_breaktime_yn != null">reservation_breaktime_yn = #{reservation_breaktime_yn},</if>
+				<if test="reservation_max != null">reservation_max = #{reservation_max}</if>
+			</set>
+		 	WHERE store_seq = #{store_seq}
+	</update>
+	
+	
+	
+	<!-- USER에서 활용되는 SQL문 모음 -->
+	<!-- 유저에서 검색하여 상점 정보 불러오기 -->
+	<select id="select_storeInfoSearch" resultType="StoreInfoModel">
+		SELECT
+			store_seq
+			, store_name
+			, store_localname1
+			, store_localname2
+			, store_point
+			
+		 FROM client_store
+		 
+	</select>
+	
+	<select id="select_storeInfoHeader" parameterType="String" resultType="StoreInfoModel">
+		
+		SELECT
+			store_name
+			, store_localname1
+			, store_localname2
+		
+		 FROM client_store
+		WHERE store_seq = #{store_seq}
+
+	</select>
+	
+	<!-- 지역 필터 -->
+	<select id="select_store_locationSearch1" resultType="StoreInfoModel">
+		
+		
+		
+		
+	</select>
+	
+	
+	
+	
+	
+</mapper>

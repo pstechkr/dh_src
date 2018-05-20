@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans:beans xmlns="http://www.springframework.org/schema/mvc"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:beans="http://www.springframework.org/schema/beans"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+		">
+		
+
+	<!-- DispatcherServlet Context: defines this servlet's request-processing infrastructure -->
+	
+	<!-- Enables the Spring MVC @Controller programming model -->
+	<annotation-driven />
+
+	<!-- Handles HTTP GET requests for /resources/** by efficiently serving up static resources in the ${webappRoot}/resources directory -->
+	<resources mapping="/resources/**" location="/resources/" />
+ 	<!-- <resources mapping="/resources/js/**" location="/js/" /> --> 
+	
+	<!-- Resolves views selected for rendering by @Controllers to .jsp resources in the /WEB-INF/views directory -->
+	<beans:bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+		<beans:property name="prefix" value="/WEB-INF/views/" />
+		<beans:property name="suffix" value=".jsp" />
+	</beans:bean>
+
+	<!-- Multipart Setting -->
+	<beans:bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+		<beans:property name="defaultEncoding" value="UTF-8" />
+	</beans:bean>
+
+	<!-- Tiles Setting -->
+	<beans:bean id="tilesConfigurer" class="org.springframework.web.servlet.view.tiles3.TilesConfigurer">
+        <beans:property name="definitions">
+            <beans:list>
+                <beans:value>/WEB-INF/tiles/tiles-definitions.xml</beans:value>
+            </beans:list>
+        </beans:property>
+    </beans:bean>
+
+	<!-- Login Check Interceptor, mapping path에 로그인 체크가 필요한 페이지를 담는다. -->
+	<interceptors>
+	
+	<!-- CLIENT Login Check Interceptor -->
+		<interceptor>
+			<mapping path="/client/main" />
+			<mapping path="/client/store" />
+			<mapping path="/client/reservation" />
+			<beans:bean id="clientLoginCheckInterceptor" class="tiein.method.ClientLoginCheckInterceptor" />
+		</interceptor>
+		
+	<!-- USER Login Check Interceptor 로그인 한 상태에서만 접근 가능 -->	
+		<interceptor>
+			<mapping path="/**/confirm" />
+			<mapping path="/mypage/**" /> 
+			<beans:bean id="userLoginCheckInterceptor" class="tiein.method.UserLoginCheckInterceptor" />
+		</interceptor>
+	
+	<!--  USER NOT Login Check Interceptor / 로그인 하지 않은 상태에서만 접근 가능 -->
+		<interceptor>
+			<mapping path="/join" />
+			<mapping path="/login" /> 
+			<beans:bean id="userNotLoginCheckInterceptor" class="tiein.method.UserNotLoginCheckInterceptor" />
+		</interceptor>
+	
+	<!-- Cache Interceptor -->
+		<interceptor>
+			<mapping path="/**/reservation" />
+			<beans:bean id="NoCacheInterceptor" class="tiein.method.NoCacheInterceptor" />
+		</interceptor>
+	</interceptors>
+	
+	
+	
+	<!-- component-scan -->
+	<context:component-scan base-package="client.controller" />
+	<context:component-scan base-package="admin.controller" />
+	
+	<context:component-scan base-package="user.controller" />
+	<context:component-scan base-package="community.controller" />
+	<context:component-scan base-package="gathering.controller" />
+	
+	
+</beans:beans>

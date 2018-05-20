@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="community.mapper.UserReviewMapper">	
+
+    <!-- 맛동산 리스트 -->
+	<select id="select_reviewList" parameterType="hashmap" resultType="ReviewInfoModel">
+		
+		SELECT
+		
+			review_seq
+			, review_name
+			, review_division
+			, review_localname2
+			, review_main_image
+			
+		 FROM community_review_info
+		WHERE delete_yn = '0'
+	 ORDER BY review_seq DESC
+		LIMIT ${page}, ${row}
+	 
+	</select>
+	
+	<!-- 맛동산 페이지 번호 -->
+	<select id="select_gathering_pagination" parameterType="hashmap" resultType="hashmap">
+		
+		SELECT
+			CONCAT(CEIL(COUNT(*)/${row})) as total_pagination
+			, CONCAT(CEIL(CEIL(COUNT(*)/${row})/${pagination_row})) as divide_pagination
+			
+		  FROM community_review_info
+		 WHERE delete_yn = '0'
+		
+	</select>
+	
+	
+	<!-- 맛동산 단일 페이지 -->
+	<select id="select_reviewInfo_one" parameterType="String" resultType="ReviewInfoModel">
+		
+		SELECT
+		
+			review_seq
+			, review_name
+			, review_division
+			, review_time
+			, review_holiday
+			, review_price
+			, review_parking
+			, review_slide_image
+			, review_latitude
+			, review_longitude
+			, review_localtitle
+		
+		FROM community_review_info
+		WHERE review_seq = #{review_seq}
+		
+	</select>
+	
+		
+	<update id="update_review_count" parameterType="String">
+		
+		UPDATE community_review_info
+		   SET review_count = review_count + 1
+		 WHERE review_seq = #{review_seq}
+
+	</update>
+	
+	
+</mapper>

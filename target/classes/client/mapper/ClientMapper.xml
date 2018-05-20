@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="client.mapper.ClientMapper">	
+
+	<insert id="insert_clientInfoRegister" parameterType="ClientInfoModel" useGeneratedKeys="true" keyProperty="client_seq">
+  		INSERT INTO client_info
+		(
+		`client_email`
+		,`client_password`
+		,`client_name`
+		,`client_companyname`
+		,`client_contactnumber`
+		,`client_license`
+		,`client_category1`
+		,`client_category2`
+		,`client_banking`
+		,`client_contactemail`
+		,`reg_cdd`
+		,`reg_cdt`
+		)
+		VALUES
+		(
+		#{client_email}
+		,#{client_password}
+		,#{client_name}
+		,#{client_companyname}
+		,#{client_contactnumber}
+		,#{client_license}
+		,#{client_category1}
+		,#{client_category2}
+		,#{client_banking}
+		,#{client_contactemail}
+		,DATE_FORMAT(now(), '%Y%m%d')
+	    ,DATE_FORMAT(now(), '%H%i%s')
+		)
+	</insert>
+	
+	<update id="update_clientInfo_license_pic" parameterType="ClientInfoModel">
+
+		UPDATE client_info
+	   	   SET client_license_pic = #{client_license_pic}
+	   	 WHERE client_seq = #{client_seq}
+	   	
+	</update>
+	
+	<select id="select_clientInfoLogin" parameterType="ClientLoginModel" resultType="ClientLoginModel">
+		
+		SELECT 
+		
+			CASE WHEN
+			COUNT(*) > 0 THEN true ELSE false END AS success
+			, client_name AS client_name
+			, client_seq AS client_seq
+			, (SELECT store_seq 
+				 FROM client_store B
+				 WHERE A.client_seq = B.client_seq) AS store_seq
+		  
+		  FROM client_info A
+		 WHERE client_email = #{client_email}
+		   AND client_password = #{client_password}
+		   AND delete_yn = 0
+	
+	</select>
+	
+</mapper>
